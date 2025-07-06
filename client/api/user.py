@@ -33,13 +33,19 @@ class UserAPIClient(BaseAPIClient):
     def delete_saved_article(self, article_id):
         return requests.delete(f"{SERVER_URL}/user/delete_article/{article_id}", headers=self._headers())
 
-    def search_articles(self, query, start_date=None, end_date=None, sort_by="likes"):
-        params = {"query": query, "sort_by": sort_by}
+    def search_articles(self, query, start_date=None, end_date=None):
+        data = {"keyword": query}
         if start_date:
-            params["start_date"] = start_date
+            data["start_date"] = start_date
         if end_date:
-            params["end_date"] = end_date
-        return requests.get(f"{SERVER_URL}/user/search", headers=self._headers(), params=params)
+            data["end_date"] = end_date
+        return requests.post(f"{SERVER_URL}/user/search", json=data, headers=self._headers())
+        # params = {"query": query}
+        # if start_date:
+        #     params["start_date"] = start_date
+        # if end_date:
+        #     params["end_date"] = end_date
+        # return requests.get(f"{SERVER_URL}/user/search", headers=self._headers(), params=params)
 
     def report_article(self, article_id):
         return requests.post(f"{SERVER_URL}/report_article/report", headers=self._headers(), json={"article_id": article_id})

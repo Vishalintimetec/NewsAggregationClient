@@ -17,23 +17,23 @@ class HeadlinesMenu(Menu):
 
     def show_headlines_today(self):
         # Fetch categories dynamically
-        categories = self.get_categories()
-        if not categories:
-            print("No categories available.")
-            return
-        print("\nAvailable Categories:")
-        for idx, cat in enumerate(categories, 1):
-            print(f"{idx}. {cat['category_name']}")
-        cat_choice = input("Choose category (number or leave blank for all): ")
-        if cat_choice.strip() == "":
-            category = None
-        else:
-            try:
-                category = categories[int(cat_choice)-1]['category_name']
-            except (IndexError, ValueError):
-                print("Invalid choice.")
-                return
-        resp = self.user_api.get_headlines_today(category=category)
+        # categories = self.get_categories()
+        # if not categories:
+        #     print("No categories available.")
+        #     return
+        # print("\nAvailable Categories:")
+        # for idx, cat in enumerate(categories, 1):
+        #     print(f"{idx}. {cat['category_name']}")
+        # cat_choice = input("Choose category (number or leave blank for all): ")
+        # if cat_choice.strip() == "":
+        #     category = None
+        # else:
+        #     try:
+        #         category = categories[int(cat_choice)-1]['category_name']
+        #     except (IndexError, ValueError):
+        #         print("Invalid choice.")
+        #         return
+        resp = self.user_api.get_headlines_today()
         self.show_article_list_and_select(resp)
 
     def show_headlines_date_range(self):

@@ -10,10 +10,11 @@ class AdminMenu(Menu):
             print("1. View list of external servers and status")
             print("2. View external server details")
             print("3. Update/Edit external server details")
-            print("4. Add new News Category")
-            print("5. Hide/Unhide Articles or Categories")
-            print("6. Block/Unblock Keywords")
-            print("7. Logout")
+            print("4. View all Category")
+            print("5. Add new News Category")
+            print("6. Hide/Unhide Articles or Categories")
+            print("7. Block/Unblock Keywords")
+            print("8. Logout")
             choice = input("Choose: ")
             if choice == "1":
                 resp = self.admin_api.get_external_servers()
@@ -40,14 +41,25 @@ class AdminMenu(Menu):
                 resp = self.admin_api.update_external_server(server_id, api_key)
                 print(resp.json())
             elif choice == "4":
+                categories_resp = self.user_api.get_all_categories()
+                if categories_resp.status_code != 200:
+                    print("Failed to fetch categories.")
+                    return
+                categories = categories_resp.json()
+                print("\nList of Categories:")
+                for cat in categories:
+                    category_id, category_name = cat['category_id'],cat['category_name']
+                    print(category_id, category_name)
+
+            elif choice == "5":
                 name = input("Enter new category name: ")
                 resp = self.admin_api.add_category(name)
                 print(resp.json())
-            elif choice == "5":
-                HideUnhideMenu(self.user_api, self.admin_api, self.session).display()
             elif choice == "6":
-                BlockKeywordMenu(self.user_api, self.admin_api, self.session).display()
+                HideUnhideMenu(self.user_api, self.admin_api, self.session).display()
             elif choice == "7":
+                BlockKeywordMenu(self.user_api, self.admin_api, self.session).display()
+            elif choice == "8":
                 break
             else:
                 print("Invalid choice.")
