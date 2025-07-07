@@ -1,1 +1,1 @@
-SERVER_URL = "http://localhost:7008"
+SERVER_URL = "http://localhost:4004"
