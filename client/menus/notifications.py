@@ -1,26 +1,47 @@
 from client.menus.base import Menu
 
 class NotificationsMenu(Menu):
+
     def display(self):
         print("\nNotifications Menu:")
         print("1. View Notifications\n2. Configure Notifications\n3. Back")
         choice = input("Choose: ")
         if choice == "1":
-            notifications = self.user_api.get_notifications()
-            notifications = notifications.json()
-            if not notifications:
-                print("No notifications found.")
-                return
-            print("\n Notifications:")
-            for idx, notif in enumerate(notifications, 1):
-                print(f"{idx}. Category: {notif['category'].title()}, Keyword: {notif['keyword']}")
-
+            self.view_notifications()
         elif choice == "2":
             self.configure_notifications()
         elif choice == "3":
             return
         else:
             print("Invalid choice.")
+
+    def view_notifications(self):
+        notifications = self.user_api.get_notifications()
+        notifications = notifications.json()
+        if not notifications:
+            print("No notifications found.")
+            return
+
+        # Group by category
+        grouped = {}
+        for notif in notifications:
+            category = notif['category'].title()
+            is_enabled = notif.get('is_enabled', 1)
+            keyword = notif.get('keyword')
+            if category not in grouped:
+                grouped[category] = {
+                    "is_enabled": is_enabled,
+                    "keywords": []
+                }
+            # Only add keyword if not None/empty and not already in the list
+            if keyword and keyword not in grouped[category]["keywords"]:
+                grouped[category]["keywords"].append(keyword)
+
+        print("\nNotifications:")
+        for idx, (category, info) in enumerate(grouped.items(), 1):
+            keywords = ", ".join(info["keywords"]) if info["keywords"] else "None"
+            status = "Enabled" if info["is_enabled"] else "Disabled"
+            print(f"{idx}. Category: {category} | Status: {status} | Keywords: {keywords}")
 
     def configure_notifications(self):
         # Get all categories dynamically
@@ -29,8 +50,8 @@ class NotificationsMenu(Menu):
             print("Failed to fetch categories.")
             return
         categories = categories_resp.json()
-
-        print("\nConfigure Notifications:")
+        self.view_notifications()
+        print("\n\nConfigure Notifications:")
         config_data = []
 
         for cat in categories:
