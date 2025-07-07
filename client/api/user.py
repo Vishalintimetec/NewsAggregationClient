@@ -50,11 +50,14 @@ class UserAPIClient(BaseAPIClient):
     def report_article(self, article_id):
         return requests.post(f"{SERVER_URL}/report_article/report", headers=self._headers(), json={"article_id": article_id})
 
-    def get_notifications(self):
+    def get_notifications_preference(self):
         return requests.get(f"{SERVER_URL}/notifications/preferences", headers=self._headers())
 
     def configure_notifications(self, config_data):
         return requests.post(f"{SERVER_URL}/notifications/configure-notifications", headers=self._headers(), json=config_data)
+
+    def get_unread_notifications(self):
+        return requests.get(f"{SERVER_URL}/notifications/unread", headers=self._headers())
 
     def record_read(self, article_id):
         return requests.post(f"{SERVER_URL}/read-history/read/{article_id}", headers=self._headers())

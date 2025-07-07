@@ -16,7 +16,22 @@ class NotificationsMenu(Menu):
             print("Invalid choice.")
 
     def view_notifications(self):
-        notifications = self.user_api.get_notifications()
+        response = self.user_api.get_unread_notifications()
+        if not response.ok:
+            print("Error fetching notifications.")
+            return
+
+        notifications = response.json()
+        if not notifications:
+            print("No notifications found.")
+            return
+
+        print("\nUnread Notifications:")
+        for idx, notif in enumerate(notifications, 1):
+            print(f"{idx}. Article ID: {notif['article_id']} | Message: {notif['message']}")
+
+    def view_notifications_setting(self):
+        notifications = self.user_api.get_notifications_preference()
         notifications = notifications.json()
         if not notifications:
             print("No notifications found.")
@@ -50,7 +65,7 @@ class NotificationsMenu(Menu):
             print("Failed to fetch categories.")
             return
         categories = categories_resp.json()
-        self.view_notifications()
+        self.view_notifications_setting()
         print("\n\nConfigure Notifications:")
         config_data = []
 
